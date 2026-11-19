@@ -1,26 +1,36 @@
 package com.example.securityLearn.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.cdi.Eager;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.securityLearn.Dto.UserRegisterRequestDto;
+import com.example.securityLearn.Dto.UserRegisterResponseDto;
+import com.example.securityLearn.Servisec.AuthServices;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/hello")
 public class UserController {
 
-@Autowired
-private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private AuthServices authServices;
+
+    public UserController (AuthServices authServices){
+      this.authServices = authServices;
+    }
+
     @GetMapping()
     public String  hello(){
-        System.out.println(passwordEncoder.encode("yash1234"));
-        System.out.println(passwordEncoder.encode("nikhil123"));
-
         return "Hello";
+    }
+
+    @PostMapping("/Register")
+    public ResponseEntity<UserRegisterResponseDto> register(
+            @RequestBody UserRegisterRequestDto userRegisterRequestDto){
+
+        UserRegisterResponseDto userRegisterResponseDto =
+                authServices.register(userRegisterRequestDto);
+
+        return ResponseEntity.ok(userRegisterResponseDto);
+
+
     }
 
 }
